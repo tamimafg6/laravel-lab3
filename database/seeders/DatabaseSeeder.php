@@ -2,22 +2,28 @@
 
 namespace Database\Seeders;
 
-use App\Models\User;
-// use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
+use App\Models\User;
+use App\Models\Author;
 
 class DatabaseSeeder extends Seeder
 {
-    /**
-     * Seed the application's database.
-     */
     public function run(): void
     {
-        // User::factory(10)->create();
+        // Upsert the Test User by email
+        User::updateOrCreate(
+            ['email' => 'test@example.com'],
+            [
+                'name'  => 'Test User',
+                'password' => bcrypt('password'),
+                // add any other defaults you need here
+            ]
+        );
 
-        User::factory()->create([
-            'name' => 'Test User',
-            'email' => 'test@example.com',
-        ]);
+        // Now seed your authors/posts/comments...
+        \App\Models\Author::factory()
+            ->count(5)
+            ->hasPosts(4)      // make sure your PostFactory has hasComments() relationship
+            ->create();
     }
 }
